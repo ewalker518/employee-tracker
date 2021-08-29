@@ -91,7 +91,7 @@ const viewAllRoles = () => {
 
 // View all employees
 const viewAllEmployees = () => {
-    var sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id - employee.role_id`;
+    var sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC`;
     db.query(sql, (err, response) => {
         if (err) throw error;
         console.log(`Current Employees:`);
