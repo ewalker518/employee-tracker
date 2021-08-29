@@ -8,6 +8,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 // const routes = require('./routes');
 
+// Connect to the database and show title
 db.connect((error) => {
     if (error) throw error;
     console.log(chalk.red.bold(`====================================================================================`));       // https://www.npmjs.com/package/chalk
@@ -16,6 +17,68 @@ db.connect((error) => {
     console.log(``);
     console.log(chalk.red.bold(`====================================================================================`));
 });
+
+// Begin prompts
+const userPrompt = () => {
+    inquirer.prompt([
+        {
+        name: 'choices',
+        type: 'list',
+        message: 'What would you like to do?',
+        choices: [
+            'View all departments',
+            'View all roles',
+            'View all employees',
+            'Add a department',
+            'Add a role',
+            'Add an employee',
+            'Update an employee role'
+        ]
+        }
+    ])
+
+    .then((answers) => {
+        const { choices } = answers;
+
+        if (choices === 'View all departments') {
+            viewAllDepartments();
+        }
+
+        if (choices === 'View all roles') {
+            viewAllRoles();
+        }
+
+        if (choices === 'View all employees') {
+            viewAllEmployees();
+        }
+
+        if (choices === 'Add a department') {
+            addDepartment();
+        }
+
+        if (choices === 'Add a role') {
+            addRole();
+        }
+
+        if (choices === 'Add an employee') {
+            addEmployee();
+        }
+    })
+};
+
+// View all departments
+const viewAllEmployees = () => {
+    var sql = `SELECT employee.id, employee.first_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id - employee.role_id`;
+}
+// View all roles
+
+// View all employees
+
+// Add department
+
+// Add role
+
+// Add employee
 
 // Start server after DB connection
 app.listen(PORT, () => {
