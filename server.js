@@ -17,10 +17,6 @@ db.connect((error) => {
     console.log(chalk.red.bold(`====================================================================================`));
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
-
 // Start server after DB connection
 app.listen(PORT, () => {
     console.log(`Server running on port http://localhost:${PORT}`);
