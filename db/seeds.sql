@@ -8,16 +8,16 @@ VALUES
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-    ('Sales Manager', 55000, 1),  -- 1, 1
-    ('Sales Team Lead', 70000, 1),  -- 2, 1
-    ('Senior Accountant', 70000, 2),  -- 3, 2
-    ('Junior Accountant', 60000, 2),  -- 4, 2
-    ('Social Media Manager', 55000, 3),  -- 5, 3
-    ('Marketing Analyst', 60000, 3),  -- 6, 3
-    ('Legal Counsel', 85000, 4),  -- 7, 4
-    ('Lawyer', 100000, 4),  -- 8, 4
-    ('Software Engineer', 90000, 5),  -- 9, 5
-    ('Lead Engineer', 125000, 5);  -- 10, 5
+    ('Sales Manager', 55000, 1),
+    ('Sales Team Lead', 70000, 1),
+    ('Senior Accountant', 70000, 2),
+    ('Junior Accountant', 60000, 2),
+    ('Social Media Manager', 55000, 3),
+    ('Marketing Analyst', 60000, 3),
+    ('Legal Counsel', 85000, 4),
+    ('Lawyer', 100000, 4),
+    ('Software Engineer', 90000, 5),
+    ('Lead Engineer', 125000, 5); 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES

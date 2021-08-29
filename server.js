@@ -2,7 +2,7 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const express = require('express')
 const db = require('./db/connection');
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3003;
 const app = express();
 const chalk = require('chalk');
 const figlet = require('figlet');
@@ -34,7 +34,8 @@ const userPrompt = () => {
             'Add a department',
             'Add a role',
             'Add an employee',
-            'Update an employee role'
+            'Update an employee role',
+            'Exit'
         ]
         }
     ])
@@ -65,12 +66,32 @@ const userPrompt = () => {
         if (choices === 'Add an employee') {
             addEmployee();
         }
+
+        if (choices === 'Update an employee role') {
+            updateEmployee();
+        }
+
+        if (choices === 'Exit') {
+            db.end();
+        }
     })
 };
 
 // View all departments
+const viewAllDepartments = () => {
+    console.log('Success');
+    userPrompt();
+}
+
+// View all roles
+const viewAllRoles = () => {
+    console.log('Success');
+    userPrompt();
+}
+
+// View all employees
 const viewAllEmployees = () => {
-    var sql = `SELECT employee.id, employee.first_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id - employee.role_id`;
+    var sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id - employee.role_id`;
     db.query(sql, (err, response) => {
         if (err) throw error;
         console.log(`Current Employees:`);
@@ -78,15 +99,30 @@ const viewAllEmployees = () => {
         userPrompt();
     })
 };
-// View all roles
-
-// View all employees
 
 // Add department
+const addDepartment = () => {
+    console.log('Success');
+    userPrompt();
+}
 
 // Add role
+const addRole = () => {
+    console.log('Success');
+    userPrompt();
+}
 
 // Add employee
+const addEmployee = () => {
+    console.log('Success');
+    userPrompt();
+}
+
+// Update employee role
+const updateEmployee = () => {
+    console.log('Success');
+    userPrompt();
+}
 
 // Start server after DB connection
 app.listen(PORT, () => {
