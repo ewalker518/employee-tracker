@@ -6,19 +6,18 @@ VALUES
     ('Legal'),
     ('Engineering');
 
-INSERT INTO roles (title, salary, department_id)
+INSERT INTO role (title, salary, department_id)
 VALUES
-    ('Sales Manager'),  -- 1, 1
-    ('Sales Team Lead'),  -- 2, 1
-    ('Senior Accountant'),  -- 3, 2
-    ('Junior Accountant'),  -- 4, 2
-    ('Social Media Manager'),  -- 5, 3
-    ('Marketing Analyst'),  -- 6, 3
-    ('Legal Counsel'),  -- 7, 4
-    ('Lawyer'),  -- 8, 4
-    ('Software Engineer'),  -- 9, 5
-    ('Lead Engineer'),  -- 10, 5
-    ('Intern');  -- 11, any
+    ('Sales Manager', 55000, 1),  -- 1, 1
+    ('Sales Team Lead', 70000, 1),  -- 2, 1
+    ('Senior Accountant', 70000, 2),  -- 3, 2
+    ('Junior Accountant', 60000, 2),  -- 4, 2
+    ('Social Media Manager', 55000, 3),  -- 5, 3
+    ('Marketing Analyst', 60000, 3),  -- 6, 3
+    ('Legal Counsel', 85000, 4),  -- 7, 4
+    ('Lawyer', 100000, 4),  -- 8, 4
+    ('Software Engineer', 90000, 5),  -- 9, 5
+    ('Lead Engineer', 125000, 5);  -- 10, 5
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
@@ -33,10 +32,6 @@ VALUES
     ('Buster', 'Hadfield', 7, 4),
     ('Morris', 'Crutchfield', 7, 4),
     ('Shaun', 'Fleming', 8, 4),
-    ('Virgil', 'Quinn', 9, 5),
+    ('Leeroy', 'Yarborough', 9, 5),
     ('Kevin', 'Sheehan', 9, 5),
-    ('Wilbur', 'Romney', 10, 5),
-    ('Leeroy', 'Yarborough', 11, 1),
-    ('Dave', 'Pearson', 11, 2),
-    ('Buddy', 'Baker', 11, 3),
-    ('Earl', 'Brooks', 11, 5);
+    ('Wilbur', 'Romney', 10, 5);

@@ -2,10 +2,11 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const express = require('express')
 const db = require('./db/connection');
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 const app = express();
 const chalk = require('chalk');
 const figlet = require('figlet');
+const cTable = require('console.table');
 // const routes = require('./routes');
 
 // Connect to the database and show title
@@ -16,6 +17,7 @@ db.connect((error) => {
     console.log(chalk.yellowBright.bold(figlet.textSync('Employee Tracker')));                                                 // http://www.figlet.org/
     console.log(``);
     console.log(chalk.red.bold(`====================================================================================`));
+    userPrompt();
 });
 
 // Begin prompts
@@ -69,7 +71,13 @@ const userPrompt = () => {
 // View all departments
 const viewAllEmployees = () => {
     var sql = `SELECT employee.id, employee.first_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id - employee.role_id`;
-}
+    db.query(sql, (err, response) => {
+        if (err) throw error;
+        console.log(`Current Employees:`);
+        console.table(response);
+        userPrompt();
+    })
+};
 // View all roles
 
 // View all employees
