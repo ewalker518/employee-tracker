@@ -285,26 +285,23 @@ const updateEmployee = () => {
 
         inquirer.prompt([
             {
-                type: 'list',
-                name: 'employee',
-                message: 'Select the employee to update their role',
-                choices: employeeArr
+                type: 'input',
+                name: 'employeeId',
+                message: 'Enter the ID of the employee to update their role',
             },
             {
-                type: 'list',
+                type: 'input',
                 name: 'newRole',
-                message: 'Select the new role for the employee',
-                choices: roleArr
+                message: 'Enter the ID of the new role for the employee',
             }
         ])
-            .then(() => {
-                const updatedRole = results.updatedRole;
+            .then(function (results) {
+                const employeeId = results.employeeId;
                 const newRole = results.newRole;
-                const sql = `UPDATE employee SET role_id = '${newRole}' WHERE id = ${updatedRole}'`;
-                db.query(sql, (err) => {
-                    // if (err) throw error;
+                const sql = `UPDATE employee SET role_id = ${newRole} WHERE id = ${employeeId}`;
+                db.query(sql, () => {
                     console.table(results);
-                    viewAllRoles();
+                    viewAllEmployees();
                     userPrompt();
                 })
             })
