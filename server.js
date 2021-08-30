@@ -271,61 +271,48 @@ const addEmployee = () => {
 
 // Update employee role
 const updateEmployee = () => {
-    let employeeArr = [];
-    const sql = `SELECT * FROM employee`;
-    db.query(sql, (err, results) => {
-        let employeeArr = [];
-        results.forEach((employee) => {employeeArr.push(`${employee.first_name} ${employee.last_name}`);});
+// Arrays to show a list of employees and available roles as options for the inquirer prompt
+// Future enhancements can use this functionality instead of using inputs
+    // const sql = `SELECT * FROM employee`;
+    // db.query(sql, (err, results) => {
+    //     let employeeArr = [];
+    //     results.forEach((employee) => {employeeArr.push(`${employee.first_name} ${employee.last_name}`);});
         
-        let sql = `SELECT role.id, role.title FROM role`;
-        db.query(sql, (err, results) => {
-            if (err) throw error;
-            let roleArr = [];
-            results.forEach((role) => { roleArr.push(role.title); });
+    //     let sql = `SELECT role.id, role.title FROM role`;
+    //     db.query(sql, (err, results) => {
+    //         if (err) throw error;
+    //         let roleArr = [];
+    //         results.forEach((role) => { roleArr.push(role.title); });
         
         inquirer.prompt([
             {
-                type: 'list',
+                type: 'input',
                 name: 'selectedEmployee',
                 message: 'Enter the ID of the employee to update their role',
-                choices: employeeArr
+                // choices: employeeArr
             },
             {
-                type: 'list',
+                type: 'input',
                 name: 'selectedRole',
                 message: 'Enter the ID of the new role for the employee',
-                choices: roleArr
+                // choices: roleArr
             }
         ])
             // get the IDs of the employee and the role that the user selects
             .then(function (answer) {
-                let employeeId;
-                let newRole;
-
-                results.forEach((role) => {
-                    if (answer.selectedRole === role.title) {
-                        newRole = role.id;
-                    }
-                });
-
-                results.forEach((employee) => {
-                    if (answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`) {
-                        employeeId = employee.id
-                    }
-                });
+                const employeeId = answer.selectedEmployee;
+                const newRole = answer.selectedRole;
 
                 // update tables
-                const sql = `UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`;
-                db.query(sql, (employeeId, newRole) => {
-                    console.table(results);
+                const sql = `UPDATE employee SET role_id = "${newRole}" WHERE id = "${employeeId}"`;
+                db.query(sql, (err) => {
+                    if (err) throw error;
+                    // console.table(results);
                     viewAllEmployees();
                     userPrompt();
                 })
             })
-    
-        });
-    }
-    )};
+        };
 
 // Start server after DB connection
 app.listen(PORT, () => {
