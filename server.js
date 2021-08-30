@@ -7,8 +7,7 @@ const app = express();
 const chalk = require('chalk');
 const figlet = require('figlet');
 const cTable = require('console.table');
-require('events').EventEmitter.prototype._maxListeners = 100;
-// const routes = require('./routes');
+// require('events').EventEmitter.prototype._maxListeners = 100;
 
 // Connect to the database and show title
 db.connect((error) => {
@@ -272,22 +271,17 @@ const addEmployee = () => {
 
 // Update employee role
 const updateEmployee = () => {
-    let employeeArr = [];
+    // let employeeArr = [];
     const sql = `SELECT * FROM employee`;
     db.query(sql, (err, results) => {
-        if (err) throw error;
-        for (let i = 0; i < results.length; i++) {
-            let employees = results[i].id + ' ' + results[i].first_name + ' ' + results[i].last_name;
-            employeeArr.push(employees);
-        }
-    })
-        let roles = `SELECT role.id, role.title FROM role`;
-        db.query(roles, (err, results) => {
+        let employeeArr = [];
+        results.forEach((employee) => {employeeArr.push(`${employee.first_name} ${employee.last_name}`);});
+        
+        let sql = `SELECT role.id, role.title FROM role`;
+        db.query(sql, (err, results) => {
             if (err) throw error;
             let roleArr = [];
             results.forEach((role) => { roleArr.push(role.title); });
-        });
-
 
         inquirer.prompt([
             {
@@ -304,19 +298,20 @@ const updateEmployee = () => {
             }
         ])
             .then(() => {
-                const updatedRole = res.updatedRole;
-                const newRole = res.newRole;
+                const updatedRole = results.updatedRole;
+                const newRole = results.newRole;
                 const sql = `UPDATE employee SET role_id = '${newRole}' WHERE id = ${updatedRole}'`;
                 db.query(sql, (err) => {
-                    if (err) throw error;
-                    console.table(res);
+                    // if (err) throw error;
+                    console.table(results);
                     viewAllRoles();
                     userPrompt();
                 })
             })
     
-    userPrompt();
-}
+        });
+    }
+    )};
 
 // Start server after DB connection
 app.listen(PORT, () => {
