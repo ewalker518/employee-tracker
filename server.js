@@ -135,24 +135,36 @@ const addDepartment = () => {
 
 // Add role
 const addRole = () => {
-    const sql = `SELECT * FROM department`
+    const sql = `SELECT role.title AS Title, role.salary AS Salary FROM role`
     db.query(sql, (err, results) => {
         if (err) throw error;
-        else var deptArr = [];
-        results.forEach((department) => { departmentArr.push(department.name); });
-        inquirer.prompt([
+        else inquirer.prompt([
             {
-                type: 'list',
-                name: 'deptName',
-                message: 'What is the name of the new role?',
-                choices: departmentArr
+                type: 'input',
+                name: 'roleTitle',
+                message: 'What is the name of the new role?'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary for this new role?'
             }
         ])
-        .then((answer) => {
-            
-        })
-    })
-    userPrompt();
+            .then(answer => {
+                db.query(`INSERT INTO role SET ?`,
+                    {
+                        title: answer.roleTitle,
+                        salary: answer.salary,
+                    },
+                    function (err) {
+                        // if (err) throw error;
+                        console.table(answer);
+                        viewAllRoles();
+                        userPrompt();
+                    }
+                )
+            })
+    });
 }
 
 // Add employee
