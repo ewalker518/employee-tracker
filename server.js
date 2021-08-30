@@ -118,7 +118,7 @@ const addDepartment = () => {
     inquirer.prompt([
         {
             type: 'input',
-            name: 'new-department',
+            name: 'newDept',
             message: 'What is the name of the new department?',
             validate: userInput => {
                 if (userInput) {
@@ -130,7 +130,14 @@ const addDepartment = () => {
             }
         }
     ])
-    userPrompt();
+    .then((answer) => {
+        var sql = `INSERT INTO department (name) VALUES (?)`;
+        db.query(sql, answer.newDept, (err, results) => {
+            if (err) throw error;
+            viewAllDepartments();
+            userPrompt();
+        })
+    })
 }
 
 // Add role
@@ -140,7 +147,6 @@ const addRole = () => {
         if (err) throw error;
         let deptArray = [];
         results.forEach((department) => {deptArray.push(department.name);});
-        deptArray.push('Create Department');
         inquirer.prompt([
             {
               type: 'list',
@@ -150,11 +156,7 @@ const addRole = () => {
             }
           ])
           .then((answer) => {
-            if (answer.deptName === 'Create Department') {
-              this.addDepartment();
-            } else {
-              roleInfo(answer);
-            }
+            roleInfo(answer);
           });
   
         const roleInfo = (deptInfo) => {
