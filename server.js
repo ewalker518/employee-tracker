@@ -277,9 +277,18 @@ const updateEmployee = () => {
     db.query(sql, (err, results) => {
         if (err) throw error;
         for (let i = 0; i < results.length; i++) {
-            let employees = results[i].id + ' ' + results[i].first_name + ' ' + results[i].last_name; 
+            let employees = results[i].id + ' ' + results[i].first_name + ' ' + results[i].last_name;
             employeeArr.push(employees);
         }
+    })
+        let roles = `SELECT role.id, role.title FROM role`;
+        db.query(roles, (err, results) => {
+            if (err) throw error;
+            let roleArr = [];
+            results.forEach((role) => { roleArr.push(role.title); });
+        });
+
+
         inquirer.prompt([
             {
                 type: 'list',
@@ -291,28 +300,21 @@ const updateEmployee = () => {
                 type: 'list',
                 name: 'newRole',
                 message: 'Select the new role for the employee',
-                choices: function () {
-                    let sql = `SELECT role.id, role.title FROM role`;
-                    db.query(sql, (err, results) => {
-                        if (err) throw error;
-                        let roleArr = [];
-                        results.forEach((role) => {roleArr.push(role.title);});
-                    })
-                }
+                choices: roleArr
             }
         ])
-        .then((answer) => {
-            const updatedRole = res.updatedRole;
-            const newRole = res.newRole;
-            const sql = `UPDATE employee SET role_id = '${newRole}' WHERE id = ${updatedRole}'`;
-            db.query(sql, (err) => {
-                if (err) throw error;
-                console.table(res);
-                viewAllRoles();
-                userPrompt();
+            .then(() => {
+                const updatedRole = res.updatedRole;
+                const newRole = res.newRole;
+                const sql = `UPDATE employee SET role_id = '${newRole}' WHERE id = ${updatedRole}'`;
+                db.query(sql, (err) => {
+                    if (err) throw error;
+                    console.table(res);
+                    viewAllRoles();
+                    userPrompt();
+                })
             })
-        })
-    })
+    
     userPrompt();
 }
 
