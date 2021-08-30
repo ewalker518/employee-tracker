@@ -135,37 +135,62 @@ const addDepartment = () => {
 
 // Add role
 const addRole = () => {
-    const sql = `SELECT role.title AS Title, role.salary AS Salary FROM role`
+    const sql = 'SELECT * FROM department'
     db.query(sql, (err, results) => {
         if (err) throw error;
-        else inquirer.prompt([
+        let deptArray = [];
+        results.forEach((department) => {deptArray.push(department.name);});
+        deptArray.push('Create Department');
+        inquirer.prompt([
             {
-                type: 'input',
-                name: 'roleTitle',
-                message: 'What is the name of the new role?'
-            },
-            {
-                type: 'input',
-                name: 'salary',
-                message: 'What is the salary for this new role?'
+              type: 'list',
+              name: 'deptName',
+              message: 'Which department is this new role in?',
+              choices: deptArray
             }
-        ])
-            .then(answer => {
-                db.query(`INSERT INTO role SET ?`,
-                    {
-                        title: answer.roleTitle,
-                        salary: answer.salary,
-                    },
-                    function (err) {
-                        // if (err) throw error;
-                        console.table(answer);
-                        viewAllRoles();
-                        userPrompt();
-                    }
-                )
-            })
-    });
-}
+          ])
+          .then((answer) => {
+            if (answer.deptName === 'Create Department') {
+              this.addDepartment();
+            } else {
+              roleInfo(answer);
+            }
+          });
+  
+        const roleInfo = (deptInfo) => {
+          inquirer
+            .prompt([
+              {
+                name: 'roleTitle',
+                type: 'input',
+                message: 'What is the name of the new role?'
+              },
+              {
+                name: 'salary',
+                type: 'input',
+                message: 'What is the salary of the new role?'
+              }
+            ])
+            .then((answer) => {
+              let newRole = answer.roleTitle;
+              let departmentId;
+  
+              results.forEach((department) => {
+                if (deptInfo.deptName === department.name) {departmentId = department.id;}
+              });
+  
+              let sql = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+              let addedRole = [newRole, answer.salary, departmentId];
+  
+              db.query(sql, addedRole, (error) => {
+                if (error) throw error;
+                viewAllRoles();
+                userPrompt();
+              });
+            });
+        };
+      });
+    };
 
 // Add employee
 const addEmployee = () => {
