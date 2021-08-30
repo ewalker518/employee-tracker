@@ -271,7 +271,7 @@ const addEmployee = () => {
 
 // Update employee role
 const updateEmployee = () => {
-    // let employeeArr = [];
+    let employeeArr = [];
     const sql = `SELECT * FROM employee`;
     db.query(sql, (err, results) => {
         let employeeArr = [];
@@ -282,24 +282,41 @@ const updateEmployee = () => {
             if (err) throw error;
             let roleArr = [];
             results.forEach((role) => { roleArr.push(role.title); });
-
+        
         inquirer.prompt([
             {
-                type: 'input',
-                name: 'employeeId',
+                type: 'list',
+                name: 'selectedEmployee',
                 message: 'Enter the ID of the employee to update their role',
+                choices: employeeArr
             },
             {
-                type: 'input',
-                name: 'newRole',
+                type: 'list',
+                name: 'selectedRole',
                 message: 'Enter the ID of the new role for the employee',
+                choices: roleArr
             }
         ])
-            .then(function (results) {
-                const employeeId = results.employeeId;
-                const newRole = results.newRole;
-                const sql = `UPDATE employee SET role_id = ${newRole} WHERE id = ${employeeId}`;
-                db.query(sql, () => {
+            // get the IDs of the employee and the role that the user selects
+            .then(function (answer) {
+                let employeeId;
+                let newRole;
+
+                results.forEach((role) => {
+                    if (answer.selectedRole === role.title) {
+                        newRole = role.id;
+                    }
+                });
+
+                results.forEach((employee) => {
+                    if (answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`) {
+                        employeeId = employee.id
+                    }
+                });
+
+                // update tables
+                const sql = `UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`;
+                db.query(sql, (employeeId, newRole) => {
                     console.table(results);
                     viewAllEmployees();
                     userPrompt();
