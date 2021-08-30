@@ -7,6 +7,7 @@ const app = express();
 const chalk = require('chalk');
 const figlet = require('figlet');
 const cTable = require('console.table');
+require('events').EventEmitter.prototype._maxListeners = 100;
 // const routes = require('./routes');
 
 // Connect to the database and show title
@@ -79,44 +80,154 @@ const userPrompt = () => {
 
 // View all departments
 const viewAllDepartments = () => {
-    console.log('Success');
+    var sql = `SELECT department.id AS id, department.name AS department FROM department`;
+    db.query(sql, (err, results) => {
+        if (err) throw error;
+        else console.log(`Department List:`);
+        console.table(results);
+        userPrompt();
+    })
     userPrompt();
-}
+};
 
 // View all roles
 const viewAllRoles = () => {
-    console.log('Success');
+    const sql = `SELECT role.id, role.title, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id`;
+    db.query(sql, (err, results) => {
+        if (err) throw error;
+        else console.log(`Current Roles:`);
+        console.table(results);
+        userPrompt();
+    })
     userPrompt();
 }
 
 // View all employees
 const viewAllEmployees = () => {
-    var sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC`;
-    db.query(sql, (err, response) => {
+    var sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC`;
+    db.query(sql, (err, results) => {
         if (err) throw error;
-        console.log(`Current Employees:`);
-        console.table(response);
+        else console.log(`Current Employees:`);
+        console.table(results);
         userPrompt();
     })
 };
 
 // Add department
 const addDepartment = () => {
-    console.log('Success');
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'new-department',
+            message: 'What is the name of the new department?',
+            validate: userInput => {
+                if (userInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the department name");
+                    return false;
+                }
+            }
+        }
+    ])
     userPrompt();
 }
 
 // Add role
 const addRole = () => {
-    console.log('Success');
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'new-role',
+            message: 'What is the name of the new role?',
+            validate: userInput => {
+                if (userInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's first name");
+                    return false;
+                }
+            }
+        }
+    ])
     userPrompt();
 }
 
 // Add employee
 const addEmployee = () => {
-    console.log('Success');
-    userPrompt();
-}
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: "What is the employee's first name?",
+            validate: userInput => {
+                if (userInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's first name");
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: "What is the employee's last name?",
+            validate: userInput => {
+                if (userInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's last name");
+                    return false;
+                }
+            }
+        }
+    ])
+    .then(answer => {
+        const newEmployee = [answer.firstName, answer.lastName]
+        const newEmployeeRole = `SELECT role.id, role.title FROM role`;
+        db.query(newEmployeeRole, (err, data) => {
+            if (err) throw error;
+            const roles = data.map(({ id, title}) => ({ name: title, value: id }))
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: "What is this employee's role?",
+                    choices: roles
+                }
+            ])
+            .then(roleChoice => {
+                const role = roleChoice.role;
+                newEmployee.push(role);
+                const newEmployeeManager = `SELECT * FROM employee`;
+                db.query(newEmployeeManager, (err, data) => {
+                    if (err) throw error;
+                    const managers = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'manager',
+                            message: "Who is this employee's manager?",
+                            choices: managers
+                        }
+                    ])
+                    .then(managerChoice => {
+                        const newManager = managerChoice.manager;
+                        newEmployee.push(newManager);
+                        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+                        db.query(sql, newEmployee, (err) => {
+                            if (err) throw error;
+                            else console.log("The new employee has successfully been added to the database");
+                            viewAllEmployees();
+                            userPrompt();
+                        })
+                    })
+                })
+            })
+        })
+    })
+};
 
 // Update employee role
 const updateEmployee = () => {
