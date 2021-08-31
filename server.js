@@ -7,7 +7,7 @@ const app = express();
 const chalk = require('chalk');
 const figlet = require('figlet');
 const cTable = require('console.table');
-// require('events').EventEmitter.prototype._maxListeners = 100;
+require('events').EventEmitter.prototype._maxListeners = 100;
 
 // Connect to the database and show title
 db.connect((error) => {
@@ -82,11 +82,11 @@ const viewAllDepartments = () => {
     var sql = `SELECT department.id AS id, department.name AS department FROM department`;
     db.query(sql, (err, results) => {
         if (err) throw error;
-        else console.log(`Department List:`);
+        console.log(``);
+        console.log(`Department List:`);
         console.table(results);
-        userPrompt();
     })
-    userPrompt();
+    // userPrompt();
 };
 
 // View all roles
@@ -94,11 +94,11 @@ const viewAllRoles = () => {
     const sql = `SELECT role.id, role.title, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id`;
     db.query(sql, (err, results) => {
         if (err) throw error;
-        else console.log(`Current Roles:`);
+        console.log(``);
+        console.log(`Current Roles:`);
         console.table(results);
-        userPrompt();
     })
-    userPrompt();
+    // userPrompt();
 }
 
 // View all employees
@@ -106,9 +106,10 @@ const viewAllEmployees = () => {
     var sql = `SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id ORDER BY employee.id ASC;`;
     db.query(sql, (err, results) => {
         if (err) throw error;
-        else console.log(`Current Employees:`);
+        console.log(``);
+        console.log(`Current Employees:`);
         console.table(results);
-        userPrompt();
+        // userPrompt();
     })
 };
 
@@ -134,7 +135,7 @@ const addDepartment = () => {
             db.query(sql, answer.newDept, (err) => {
                 if (err) throw error;
                 viewAllDepartments();
-                userPrompt();
+                // userPrompt();
             })
         })
 }
@@ -186,7 +187,7 @@ const addRole = () => {
                     db.query(sql, addedRole, (error) => {
                         if (error) throw error;
                         viewAllRoles();
-                        userPrompt();
+                        // userPrompt();
                     });
                 });
         };
@@ -260,7 +261,7 @@ const addEmployee = () => {
                                         if (err) throw error;
                                         else console.log("The new employee has successfully been added to the database");
                                         viewAllEmployees();
-                                        userPrompt();
+                                        // userPrompt();
                                     })
                                 })
                         })
@@ -309,7 +310,7 @@ const updateEmployee = () => {
                     if (err) throw error;
                     // console.table(results);
                     viewAllEmployees();
-                    userPrompt();
+                    // userPrompt();
                 })
             })
         };
